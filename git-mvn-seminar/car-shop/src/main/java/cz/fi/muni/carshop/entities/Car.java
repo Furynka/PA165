@@ -1,6 +1,7 @@
 package cz.fi.muni.carshop.entities;
 
 import java.awt.Color;
+import java.util.Objects;
 
 import cz.fi.muni.carshop.enums.CarTypes;
 
@@ -42,8 +43,20 @@ public class Car {
 	public void setPrice(int price) {
 		this.price = price;
 	}
-	
-	
-	
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Car car = (Car) o;
+		return constructionYear == car.constructionYear &&
+				price == car.price &&
+				Objects.equals(color, car.color) &&
+				type == car.type;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(color, type, constructionYear, price);
+	}
 }
