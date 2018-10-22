@@ -62,6 +62,9 @@ public class Product {
 	@Enumerated
 	private Color color;
 
+	@ManyToMany
+	private Set<Category> categories = new HashSet<>();
+
 	
 	public void setId(Long id){
 		this.id = id;
@@ -74,24 +77,24 @@ public class Product {
 	 * with TASK 02 you should delete this empty method
 	 * @param kitchen
 	 */
-	public void addCategory(Category kitchen) {	
-	}
-	public List<Product> getCategories() {
-		return null;
-	}
+//	public void addCategory(Category kitchen) {
+//	}
+//	public List<Product> getCategories() {
+//		return null;
+//	}
 	//TODO after you are done with task02 you can uncomment this methods
-//	public void removeCategory(Category category)	{
-//		this.categories.remove(category);
-//	}
-//	
-//	public void addCategory(Category c) {
-//		categories.add(c);
-//		c.addProduct(this);
-//	}
-//
-//	public Set<Category> getCategories() {
-//		return Collections.unmodifiableSet(categories);
-//	}
+	public void removeCategory(Category category)	{
+		this.categories.remove(category);
+	}
+
+	public void addCategory(Category c) {
+		categories.add(c);
+		c.addProduct(this);
+	}
+
+	public Set<Category> getCategories() {
+		return Collections.unmodifiableSet(categories);
+	}
 	
 
 
