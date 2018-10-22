@@ -1,12 +1,15 @@
 package cz.fi.muni.pa165;
 
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
 
+import cz.fi.muni.pa165.enums.Color;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import cz.fi.muni.pa165.entity.Category;
@@ -22,7 +25,10 @@ public class MainJavaSe {
 		emf = Persistence.createEntityManagerFactory("default");
 		try {
 			// BEGIN YOUR CODE
-			task04();
+			//task04();
+			//task05();
+			//task06();
+			task08();
 			// END YOUR CODE
 		} finally {
 			emf.close();
@@ -36,6 +42,18 @@ public class MainJavaSe {
 		// You must first obtain the Entity manager
 		// Then you have to start transaction using getTransaction().begin()
 		// Then use persist() to persist both of the categories and finally commit the transaction
+		EntityManager manager = emf.createEntityManager();
+		Category electronics = new Category();
+		electronics.setName("Electronics");
+		Category musical = new Category();
+		musical.setName("Musical");
+
+
+		manager.getTransaction().begin();
+		manager.persist(electronics);
+		manager.persist(musical);
+		manager.getTransaction().commit();
+		manager.close();
 
 		// The code below is just testing code. Do not modify it
 		EntityManager em = emf.createEntityManager();
@@ -68,7 +86,12 @@ public class MainJavaSe {
 		// TODO under this line. create new EM and start new transaction. Merge
 		// the detached category
 		// into the context and change the name to "Electro"
-
+		category.setName("Electro");
+		EntityManager manager = emf.createEntityManager();
+		manager.getTransaction().begin();
+		manager.merge(category);
+		manager.getTransaction().commit();
+		manager.close();
 
 		// The code below is just testing code. Do not modify it
 		EntityManager checkingEm = emf.createEntityManager();
@@ -95,6 +118,18 @@ public class MainJavaSe {
 		//
 		// To test your code uncomment the commented code at the end of this method.
 
+		Product product = new Product();
+		product.setName("Guitar");
+		product.setColor(Color.BLACK);
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(2011,0,20);
+		product.setAddedDate(calendar.getTime());
+
+		EntityManager manager = emf.createEntityManager();
+		manager.getTransaction().begin();
+		manager.persist(product);
+		manager.getTransaction().commit();
+		manager.close();
 
 		EntityManager em = emf.createEntityManager();
 		em.getTransaction().begin();
@@ -103,7 +138,7 @@ public class MainJavaSe {
 		em.getTransaction().commit();
 		em.close();
 
-	/** TODO Uncomment the following test code after you are finished!
+	// TODO Uncomment the following test code after you are finished!
 	 
 		assertEq(p.getName(), "Guitar");
 		Calendar cal = Calendar.getInstance();
@@ -137,7 +172,7 @@ public class MainJavaSe {
 	
 
 		System.out.println("Task6 ok!");
-		*/
+
 	}
 	
 	private static void task08() {
@@ -148,8 +183,8 @@ public class MainJavaSe {
 		
 		//TODO after you implement equals nad hashCode, you can uncomment the code below. It will try
 		// to check whether you are doing everything correctly. 
-	
-/* TODO uncomment the following (it should work if you were successfull with task08)
+
+		//TODO uncomment the following (it should work if you were successfull with task08)
 
 
 		class MockProduct extends Product {
@@ -187,7 +222,7 @@ public class MainJavaSe {
 		if (mp.getNameCalled){
 			System.out.println("CORRECT");
 		} else System.out.println("INCORRECT!");
-		 */
+
 	
 	}
 
