@@ -64,62 +64,54 @@ public class Task02 extends AbstractTestNGSpringContextTests {
 	@Test
 	public void testCategoryElectro() {
 		EntityManager entityManager = emf.createEntityManager();
-		entityManager.getTransaction().begin();
 		Category foundCategory = entityManager.find(Category.class, electro.getId());
 
 		assertContainsProductWithName(foundCategory.getProducts(), flashlight.getName());
 		assertContainsProductWithName(foundCategory.getProducts(), kitchenRobot.getName());
-
-		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	@Test
 	public void testCategoryKitchen() {
 		EntityManager entityManager = emf.createEntityManager();
-		entityManager.getTransaction().begin();
 		Category foundCategory = entityManager.find(Category.class, kitchen.getId());
 
 		assertContainsProductWithName(foundCategory.getProducts(), plate.getName());
 		assertContainsProductWithName(foundCategory.getProducts(), kitchenRobot.getName());
-
-		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	@Test
 	public void testProductFlashlight() {
 		EntityManager entityManager = emf.createEntityManager();
-		entityManager.getTransaction().begin();
 		Product foundProduct = entityManager.find(Product.class, flashlight.getId());
 
 		assertContainsCategoryWithName(foundProduct.getCategories(), electro.getName());
-
-		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	@Test
 	public void testProductKitchenRobot() {
 		EntityManager entityManager = emf.createEntityManager();
-		entityManager.getTransaction().begin();
 		Product foundProduct = entityManager.find(Product.class, kitchenRobot.getId());
 
 		assertContainsCategoryWithName(foundProduct.getCategories(), kitchen.getName());
 		assertContainsCategoryWithName(foundProduct.getCategories(), electro.getName());
-
-		entityManager.getTransaction().commit();
-		entityManager.close();
 	}
 
 	@Test
 	public void testProductPlate() {
 		EntityManager entityManager = emf.createEntityManager();
-		entityManager.getTransaction().begin();
 		Product foundProduct = entityManager.find(Product.class, plate.getId());
 
 		assertContainsCategoryWithName(foundProduct.getCategories(), kitchen.getName());
+	}
 
+	@Test(expectedExceptions=ConstraintViolationException.class)
+	public void testDoesntSaveNullName(){
+		Product noNamedProduct = new Product();
+		noNamedProduct.setName(null);
+
+		EntityManager entityManager = emf.createEntityManager();
+		entityManager.getTransaction().begin();
+		entityManager.persist(noNamedProduct);
 		entityManager.getTransaction().commit();
 		entityManager.close();
 	}
