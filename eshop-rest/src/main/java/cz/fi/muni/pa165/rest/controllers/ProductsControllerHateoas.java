@@ -5,6 +5,7 @@ import cz.fi.muni.pa165.dto.UserDTO;
 import cz.fi.muni.pa165.facade.ProductFacade;
 import cz.fi.muni.pa165.rest.exceptions.ResourceNotFoundException;
 import cz.fi.muni.pa165.rest.assemblers.ProductResourceAssembler;
+import cz.fi.muni.pa165.rest.exceptions.ResourceNotModifiedException;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.inject.Inject;
@@ -23,11 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import org.springframework.http.MediaType;
+import org.springframework.web.context.request.WebRequest;
 
 /**
  * REST HATEOAS Controller for Products
  * This class shows Spring support for full HATEOAS REST services
- * it uses the {@link cz.fi.muni.pa165.rest.assemblers.productResourceAssembler} to create 
+ * it uses the {@link cz.fi.muni.pa165.rest.assemblers.ProductResourceAssembler} to create
  * resources to be returned as ResponseEntities
  *
  */
@@ -67,6 +69,34 @@ public class ProductsControllerHateoas {
 
         return new ResponseEntity<Resources<Resource<ProductDTO>>>(productsResources, HttpStatus.OK);
 
+    }
+
+    /**
+     * Get list of products
+     *
+     * @return HttpEntity<Resources<Resource<ProductDTO>>>
+     */
+    @RequestMapping(value = "/cached", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public final HttpEntity<Resources<Resource<ProductDTO>>> getProductsCached(WebRequest webRequest) {
+        logger.debug("rest getProducts({}) hateoas cached version");
+
+        final Collection<ProductDTO> productsDTO = productFacade.getAllProducts();
+        final Collection<Resource<ProductDTO>> productResourceCollection = new ArrayList();
+
+        for (ProductDTO p : productsDTO) {
+            productResourceCollection.add(productResourceAssembler.toResource(p));
+        }
+
+        Resources<Resource<ProductDTO>> productsResources = new Resources(productResourceCollection);
+        productsResources.add(linkTo(ProductsControllerHateoas.class).withSelfRel());
+
+        StringBuilder eTag = new StringBuilder("\"");
+        eTag.append(Integer.toString(productsResources.hashCode())).append('\"');
+        if (webRequest.checkNotModified(eTag.toString())){
+            throw new ResourceNotModifiedException();
+        }
+
+        return ResponseEntity.ok().eTag(eTag.toString()).body(productsResources);
     }
 
     /**
