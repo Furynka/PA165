@@ -60,10 +60,10 @@ public class OrdersControllerTest extends AbstractTestNGSpringContextTests {
 
         doReturn(Collections.unmodifiableList(this.createOrders())).when(orderFacade).getAllOrders();
 
-        mockMvc.perform(get("/orders").param("status", "ALL"))//.andDo(print())
+        mockMvc.perform(get("/orders").param("status", "ALL")).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                        content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[?(@.id==1)].state").value("DONE"))
                 .andExpect(jsonPath("$.[?(@.id==2)].state").value("CANCELED"))
                 .andExpect(jsonPath("$.[?(@.id==6)].state").value("SHIPPED"));
@@ -78,10 +78,10 @@ public class OrdersControllerTest extends AbstractTestNGSpringContextTests {
 
         doReturn(Collections.unmodifiableList(orders)).when(orderFacade).getOrdersByState(OrderState.DONE);
 
-        mockMvc.perform(get("/orders").param("status", "ALL"))//.andDo(print())
+        mockMvc.perform(get("/orders").param("status", "ALL")).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                        content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[?(@.id==1)].state").value("DONE")); 
 
     }
@@ -91,10 +91,10 @@ public class OrdersControllerTest extends AbstractTestNGSpringContextTests {
 
         doReturn(Collections.unmodifiableList(this.createOrders())).when(orderFacade).getOrdersByUser(1L);
 
-        mockMvc.perform(get("/orders/by_user_id/1"))//.andDo(print())
+        mockMvc.perform(get("/orders/by_user_id/1")).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                        content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[?(@.id==1)].state").value("DONE"))
                 .andExpect(jsonPath("$.[?(@.id==2)].state").value("CANCELED"))
                 .andExpect(jsonPath("$.[?(@.id==6)].state").value("SHIPPED"));
@@ -117,26 +117,26 @@ public class OrdersControllerTest extends AbstractTestNGSpringContextTests {
         mockMvc.perform(get("/orders/1"))
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                        content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.state").value("DONE"));
 
         mockMvc.perform(get("/orders/2"))
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                        content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.state").value("CANCELED"));
         
         mockMvc.perform(get("/orders/6"))
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                        content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.state").value("SHIPPED"));
 
     }
 
      @Test
     public void getInvalidOrder() throws Exception {
-        doReturn(null).when(orderFacade).getOrderById(1l);
+        doThrow(new RuntimeException()).when(orderFacade).getOrderById(1l);
 
         mockMvc.perform(get("/orders/1"))
                 .andExpect(status().is4xxClientError());
@@ -151,10 +151,10 @@ public class OrdersControllerTest extends AbstractTestNGSpringContextTests {
         doReturn(orders.get(0)).when(orderFacade).getOrderById(1L);
         doNothing().when(orderFacade).shipOrder(1L);
         
-        mockMvc.perform(post("/orders/1").param("action", "SHIP"))//.andDo(print())
+        mockMvc.perform(post("/orders/1").param("action", "SHIP")).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                        content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.id").value(1));   // TODO: improve this test
 
     }
@@ -167,7 +167,7 @@ public class OrdersControllerTest extends AbstractTestNGSpringContextTests {
         doReturn(orders.get(0)).when(orderFacade).getOrderById(1L);
         doNothing().when(orderFacade).shipOrder(1L);
         
-        mockMvc.perform(post("/orders/1").param("action", "INVALID"))//.andDo(print())
+        mockMvc.perform(post("/orders/1").param("action", "INVALID")).andDo(print())
                 .andExpect(status().isNotAcceptable());
 
     }

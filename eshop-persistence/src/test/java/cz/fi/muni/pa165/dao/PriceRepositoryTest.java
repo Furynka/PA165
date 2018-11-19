@@ -2,7 +2,6 @@ package cz.fi.muni.pa165.dao;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -45,14 +44,14 @@ public class PriceRepositoryTest  extends AbstractTestNGSpringContextTests{
 	
 	@Test
 	public void create(){
-        Price foundPrice = priceRepository.findById(savedPrice.getId()).orElseThrow(() -> new RuntimeException("price not found"));
-        Assert.assertEquals(savedPrice.getPriceStart(), foundPrice.getPriceStart());
+		Price foundPrice = priceRepository.findOne(savedPrice.getId());
+		Assert.assertEquals(savedPrice.getPriceStart(), foundPrice.getPriceStart());
 	}
 	
 	@Test
 	public void update(){
 		savedPrice.setValue(new BigDecimal("2"));
-		Price found = priceRepository.findById(savedPrice.getId()).orElseThrow(() -> new RuntimeException("price not found"));
+		Price found = priceRepository.findOne(savedPrice.getId());
 		Assert.assertEquals(new BigDecimal("2"), found.getValue());
 		
 	}

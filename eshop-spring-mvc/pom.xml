@@ -34,16 +34,17 @@
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-api</artifactId>
-            <version>${tomcat.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.taglibs</groupId>
             <artifactId>taglibs-standard-spec</artifactId>
+            <version>${taglibs-standard.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.taglibs</groupId>
             <artifactId>taglibs-standard-impl</artifactId>
+            <version>${taglibs-standard.version}</version>
         </dependency>
 
         <!-- Spring MVC -->
@@ -58,7 +59,7 @@
             <artifactId>validation-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate.validator</groupId>
+            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
 
@@ -82,36 +83,30 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
+            <artifactId>mockito-all</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
-   <!--
-      Start tomcat with "mvn cargo:run" and visit http://localhost:8080/eshop/
-    -->
 
     <build>
         <!-- what to do when only "mvn" is run -->
-        <defaultGoal>cargo:run</defaultGoal>
-        <!-- name of the produced war -->
-        <finalName>eshop</finalName>
+        <defaultGoal>tomcat7:run</defaultGoal>
         <plugins>
-            <!--  embedded tomcat 8 -->
+            <!-- Servlet 3.0 allows no web.xml deployment descriptor -->
             <plugin>
-                <groupId>org.codehaus.cargo</groupId>
-                <artifactId>cargo-maven2-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
             </plugin>
-            <!--  embedded tomcat 7 -->
+            <!--  embedded tomcat -->
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
                 <configuration>
                     <path>/eshop</path>
                 </configuration>

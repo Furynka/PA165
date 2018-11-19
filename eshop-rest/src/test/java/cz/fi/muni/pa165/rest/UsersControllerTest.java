@@ -30,8 +30,6 @@ import cz.fi.muni.pa165.rest.controllers.UsersController;
 import cz.fi.muni.pa165.rest.exceptions.ResourceNotFoundException;
 import static org.mockito.Mockito.doThrow;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-import org.springframework.web.context.WebApplicationContext;
 
 @WebAppConfiguration
 @ContextConfiguration(classes = {RootWebContext.class})
@@ -50,7 +48,6 @@ public class UsersControllerTest extends AbstractTestNGSpringContextTests {
     public void setup() {
         MockitoAnnotations.initMocks(this);
         mockMvc = standaloneSetup(usersController).setMessageConverters(new MappingJackson2HttpMessageConverter()).build();
-        
     }
 
     @Test
@@ -61,7 +58,7 @@ public class UsersControllerTest extends AbstractTestNGSpringContextTests {
         mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                        content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[?(@.id==1)].surname").value("Smith"))
                 .andExpect(jsonPath("$.[?(@.id==2)].surname").value("Williams"));
 
@@ -78,21 +75,20 @@ public class UsersControllerTest extends AbstractTestNGSpringContextTests {
         mockMvc.perform(get("/users/1"))
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                        content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.surname").value("Smith"));
 
         mockMvc.perform(get("/users/2"))
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                        content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.surname").value("Williams"));
 
     }
 
      @Test
     public void getInvalidUser() throws Exception {
-        doReturn(null).when(userFacade).findUserById(1l);
-        
+        doThrow(new RuntimeException()).when(userFacade).findUserById(1l);
 
         mockMvc.perform(get("/users/1"))
                 .andExpect(status().is4xxClientError());

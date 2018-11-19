@@ -54,12 +54,12 @@ public class OrdersController {
             throw new InvalidParameterException();
         }
 
-        final OrderState os = OrderState.valueOf(status);
+        OrderState os = OrderState.valueOf(status);
 
         if (lastWeek) {
-            return orderFacade.getAllOrdersLastWeek(os);
+            return orderFacade.getAllOrdersLastWeek(OrderState.valueOf(status));
         } else {
-            return orderFacade.getOrdersByState(os);
+            return orderFacade.getOrdersByState(OrderState.valueOf(status));
         }
     }
 
@@ -73,11 +73,12 @@ public class OrdersController {
         
         logger.debug("rest getOrderByUserId({})", userId);
 
+        try {
             List<OrderDTO> orderDTOs = orderFacade.getOrdersByUser(userId);
-            if (orderDTOs == null){
-                    throw new ResourceNotFoundException();
-            }       
             return orderDTOs;
+        } catch (Exception ex) {
+            throw new ResourceNotFoundException();
+        }
 
     }
 
@@ -92,13 +93,12 @@ public class OrdersController {
        
         logger.debug("rest getOrder({})", id);
 
-        OrderDTO orderDTO = orderFacade.getOrderById(id);
-        if (orderDTO == null) {
-            throw new ResourceNotFoundException();
+        try{
+            OrderDTO orderDTO = orderFacade.getOrderById(id);
+            return orderDTO;
+        } catch(Exception ex){
+            throw new ResourceNotFoundException();  
         }
-
-        return orderDTO;
-    
     }
 
     /**

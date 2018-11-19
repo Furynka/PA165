@@ -60,7 +60,7 @@ public class CategoriesControllerTest extends AbstractTestNGSpringContextTests {
         mockMvc.perform(get("/categories"))
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                        content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[?(@.id==1)].name").value("Electronics"))
                 .andExpect(jsonPath("$.[?(@.id==2)].name").value("Home Appliances"));
 
@@ -77,20 +77,20 @@ public class CategoriesControllerTest extends AbstractTestNGSpringContextTests {
         mockMvc.perform(get("/categories/1"))
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                        content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.name").value("Electronics"));
 
         mockMvc.perform(get("/categories/2"))
                 .andExpect(status().isOk())
                 .andExpect(
-                        content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
+                        content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.name").value("Home Appliances"));
 
     }
 
     @Test
     public void getInvalidCategory() throws Exception {
-        doReturn(null).when(categoryFacade).getCategoryById(1l);
+        doThrow(new RuntimeException("")).when(categoryFacade).getCategoryById(1l);
 
         mockMvc.perform(get("/categories/1"))
                 .andExpect(status().is4xxClientError());

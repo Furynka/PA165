@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * @author brossi
  */
-@XmlRootElement
+//@XmlRootElement
 public class ApiError {
     
     private List<String> errors;

@@ -62,10 +62,8 @@ public class OrderFacadeImpl implements OrderFacade {
 
 	@Override
 	public OrderDTO getOrderById(Long id) {
-            Order order = orderService.findOrderById(id);
-            return (order == null) ? null : beanMappingService.mapTo(order, OrderDTO.class);
-                 
-		
+		return beanMappingService.mapTo(orderService.findOrderById(id),
+				OrderDTO.class);
 	}
 
 	@Override
